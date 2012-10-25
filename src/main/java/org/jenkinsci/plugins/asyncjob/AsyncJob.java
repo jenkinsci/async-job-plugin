@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.async;
+package org.jenkinsci.plugins.asyncjob;
 
 import hudson.Functions;
 import hudson.model.AbstractProject;
@@ -50,7 +50,7 @@ public abstract class AsyncJob<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
         // if a build is parameterized, let that take over
         ParametersDefinitionProperty pp = getProperty(ParametersDefinitionProperty.class);
         if (pp != null) {
-            pp._doBuild(req,rsp);
+            pp._doBuild(req,rsp,null);
             return;
         }
 

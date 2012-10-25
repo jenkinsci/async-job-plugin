@@ -1,7 +1,6 @@
-package org.jenkinsci.plugins.async;
+package org.jenkinsci.plugins.asyncjob;
 
 import org.jvnet.hudson.test.HudsonTestCase;
-import org.kohsuke.stapler.MetaClass;
 import org.mortbay.jetty.bio.SocketConnector;
 
 /**
@@ -23,6 +22,6 @@ public class Main extends HudsonTestCase {
 
         jenkins.createProject(TestAsyncJob.class, "foo");
 
-        interactiveBreak();
+//        interactiveBreak();
     }
 }

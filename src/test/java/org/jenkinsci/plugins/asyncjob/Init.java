@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.async;
+package org.jenkinsci.plugins.asyncjob;
 
 import org.kohsuke.stapler.MetaClass;
 
