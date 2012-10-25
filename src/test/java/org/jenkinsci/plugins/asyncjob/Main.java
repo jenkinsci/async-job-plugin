@@ -1,14 +1,24 @@
 package org.jenkinsci.plugins.asyncjob;
 
+import org.jvnet.hudson.test.HudsonHomeLoader;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.mortbay.jetty.bio.SocketConnector;
 
+import java.io.File;
+
 /**
+ * Sample Main program. Run this and use http://localhost:8888/
+ *
  * @author Kohsuke Kawaguchi
  */
 public class Main extends HudsonTestCase {
     @Override
     protected void setUp() throws Exception {
+        homeLoader = new HudsonHomeLoader() {
+            public File allocate() throws Exception {
+                return new File("./work");
+            }
+        };
         super.setUp();
         new Init().init();
     }
@@ -20,8 +30,9 @@ public class Main extends HudsonTestCase {
         server.addConnector(connector);
         connector.start();
 
-        jenkins.createProject(TestAsyncJob.class, "foo");
+        if (jenkins.getItem("foo")==null)
+            jenkins.createProject(TestAsyncJob.class, "foo");
 
-//        interactiveBreak();
+        interactiveBreak();
     }
 }

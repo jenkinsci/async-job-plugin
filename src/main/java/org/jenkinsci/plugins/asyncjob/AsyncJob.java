@@ -4,6 +4,7 @@ import hudson.Functions;
 import hudson.model.AbstractProject;
 import hudson.model.Cause.UserIdCause;
 import hudson.model.CauseAction;
+import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.Label;
@@ -12,6 +13,7 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Queue.Task;
 import hudson.model.ResourceList;
 import hudson.model.RunMap;
+import hudson.model.RunMap.Constructor;
 import hudson.model.queue.CauseOfBlockage;
 import hudson.model.queue.SubTask;
 import jenkins.model.Jenkins;
@@ -20,6 +22,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -41,6 +44,18 @@ public abstract class AsyncJob<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
 
     protected AsyncJob(ItemGroup parent, String name) {
         super(parent, name);
+    }
+
+    @Override
+    public void onLoad(ItemGroup<? extends Item> parent, String name) throws IOException {
+        super.onLoad(parent, name);
+
+        this.builds = new RunMap<R>();
+        this.builds.load(this,new Constructor<R>() {
+            public R create(File dir) throws IOException {
+                return loadBuild(dir);
+            }
+        });
     }
 
     /**
@@ -152,6 +167,23 @@ public abstract class AsyncJob<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
      */
     protected Class<R> getBuildClass() {
         return Functions.getTypeParameter(getClass(), AsyncJob.class,1);
+    }
+
+    /**
+     * Loads an existing build record from disk.
+     */
+    protected R loadBuild(File dir) throws IOException {
+        try {
+            return getBuildClass().getConstructor(getClass(),File.class).newInstance(this,dir);
+        } catch (InstantiationException e) {
+            throw new Error(e);
+        } catch (IllegalAccessException e) {
+            throw new Error(e);
+        } catch (InvocationTargetException e) {
+            throw new Error(e);
+        } catch (NoSuchMethodException e) {
+            throw new Error(e);
+        }
     }
 
     public synchronized R createExecutable() throws IOException {
