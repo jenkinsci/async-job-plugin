@@ -7,6 +7,7 @@ import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Calendar;
@@ -72,7 +73,7 @@ public abstract class AsyncRun<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
      */
     public synchronized TaskListener createListener() throws IOException {
         if (listener==null)
-            listener = new StreamTaskListener(getLogFile(), Charset.defaultCharset());
+            listener = new StreamTaskListener(new FileOutputStream(getLogFile(),true), Charset.defaultCharset());
         return listener;
     }
 }
