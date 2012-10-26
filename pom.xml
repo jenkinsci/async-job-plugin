@@ -10,6 +10,16 @@
   <artifactId>async-job</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
+  <name>Asynchronous Job type plugin</name>
+  <description>Library plugin that adds the asynchronous job type.</description>
+
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/Async+Job+Plugin</url>
+
+  <scm>
+    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+  </scm>
 
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
