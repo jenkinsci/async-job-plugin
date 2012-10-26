@@ -2,11 +2,13 @@ package org.jenkinsci.plugins.asyncjob;
 
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.TaskListener;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -40,5 +42,11 @@ public class TestAsyncRun extends AsyncRun<TestAsyncJob,TestAsyncRun> {
     public HttpResponse doComplete() throws IOException {
         markCompleted();
         return HttpResponses.redirectToDot();
+    }
+
+    public HttpResponse doWriteLog() throws IOException {
+        TaskListener l = createListener();
+        l.getLogger().println("Current time is "+new Date());
+        return HttpResponses.redirectTo("console");
     }
 }
