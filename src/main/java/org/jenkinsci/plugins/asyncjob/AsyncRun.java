@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.asyncjob;
 
 import hudson.model.BallColor;
 import hudson.model.Queue;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
@@ -39,10 +40,11 @@ public abstract class AsyncRun<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
     /**
      * Marks the asynchronous task complete.
      */
-    public void markCompleted() throws IOException {
+    public void markCompleted(Result result) throws IOException {
         if (!isAsyncCompleted) {
             isAsyncCompleted = true;
             duration = System.currentTimeMillis()-getTimeInMillis();
+            this.result = result;   // violation of the base class semantics
             save();
         }
     }
@@ -54,7 +56,7 @@ public abstract class AsyncRun<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
 
     /**
      * Indicates if the actual asynchronous portion of the work has been completed
-     * (by invoking {@link #markCompleted()}.
+     * (by invoking {@link #markCompleted(Result)}.
      */
     public boolean isAsyncCompleted() {
         return isAsyncCompleted;

@@ -5,6 +5,7 @@ import hudson.model.Result;
 import hudson.model.TaskListener;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.QueryParameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,8 +40,8 @@ public class TestAsyncRun extends AsyncRun<TestAsyncJob,TestAsyncRun> {
         });
     }
 
-    public HttpResponse doComplete() throws IOException {
-        markCompleted();
+    public HttpResponse doComplete(@QueryParameter String result) throws IOException {
+        markCompleted(Result.fromString(result));
         return HttpResponses.redirectToDot();
     }
 

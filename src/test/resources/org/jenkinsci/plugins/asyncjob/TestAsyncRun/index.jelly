@@ -5,7 +5,8 @@
     <l:main-panel>
       <j:if test="${!it.isAsyncCompleted()}">
         <p>
-          Click <a href="complete">this link</a> to complete this build.
+          Click <a href="complete?result=success">this link</a> to complete this build,
+          or <a href="complete?result=abort">abort</a>, <a href="complete?result=failure">fail</a>, or <a href="complete?result=unstable">unstable</a>.
         </p>
       </j:if>
       <p>
