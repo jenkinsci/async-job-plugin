@@ -37,11 +37,14 @@ public abstract class AsyncRun<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
     }
 
     /**
-     * Marks the asynchornous task complete.
+     * Marks the asynchronous task complete.
      */
     public void markCompleted() throws IOException {
-        isAsyncCompleted = true;
-        save();
+        if (!isAsyncCompleted) {
+            isAsyncCompleted = true;
+            duration = System.currentTimeMillis()-getTimeInMillis();
+            save();
+        }
     }
 
     @Override
