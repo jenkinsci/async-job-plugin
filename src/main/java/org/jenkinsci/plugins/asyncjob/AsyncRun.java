@@ -1,12 +1,16 @@
 package org.jenkinsci.plugins.asyncjob;
 
 import hudson.model.BallColor;
+import hudson.model.Executor;
 import hudson.model.Queue;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.StreamTaskListener;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,7 +55,7 @@ public abstract class AsyncRun<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
 
     @Override
     public boolean isBuilding() {
-        return !isAsyncCompleted && super.isBuilding();
+        return !isAsyncCompleted || super.isBuilding();
     }
 
     /**
@@ -81,4 +85,10 @@ public abstract class AsyncRun<P extends AsyncJob<P,R>, R extends AsyncRun<P,R>>
             listener = new StreamTaskListener(new FileOutputStream(getLogFile(),true), Charset.defaultCharset());
         return listener;
     }
+
+    /**
+     * Aborts the build if it's indeed in progress.
+     */
+    public abstract void doStop(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException;
+
 }
