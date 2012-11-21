@@ -6,7 +6,10 @@ import hudson.model.TaskListener;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -21,6 +24,24 @@ public class TestAsyncRun extends AsyncRun<TestAsyncJob,TestAsyncRun> {
 
     public TestAsyncRun(TestAsyncJob project, File buildDir) throws IOException {
         super(project, buildDir);
+    }
+
+    @Override
+    public void doStop(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        {
+            // This is where you talk to the external system to actually abort stuff
+            System.out.println("doing abort");
+
+            if (false) {
+                // if you couldn't abort...
+                // this would still keep the build marked as running
+                // alternatively maybe you want to call markCompleted(FAILURE) to mark it as failed?
+                throw new IOException("Failed to abort");
+            }
+        }
+
+        markCompleted(Result.ABORTED);
+        rsp.sendRedirect2(".");
     }
 
     public void run() {
