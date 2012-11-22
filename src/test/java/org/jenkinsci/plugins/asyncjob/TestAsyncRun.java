@@ -13,11 +13,14 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Kohsuke Kawaguchi
  */
 public class TestAsyncRun extends AsyncRun<TestAsyncJob,TestAsyncRun> {
+    private String referenceToStuffGoingOnOutsieJenkins;
+
     public TestAsyncRun(TestAsyncJob job) throws IOException {
         super(job);
     }
@@ -30,7 +33,8 @@ public class TestAsyncRun extends AsyncRun<TestAsyncJob,TestAsyncRun> {
     public void doStop(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         {
             // This is where you talk to the external system to actually abort stuff
-            System.out.println("doing abort");
+            System.out.println("aborting");
+            abortStuffOutsideJenkins(referenceToStuffGoingOnOutsieJenkins);
 
             if (false) {
                 // if you couldn't abort...
@@ -41,14 +45,25 @@ public class TestAsyncRun extends AsyncRun<TestAsyncJob,TestAsyncRun> {
         }
 
         markCompleted(Result.ABORTED);
-        rsp.sendRedirect2(".");
+        rsp.forwardToPreviousPage(req);
+    }
+
+    private void abortStuffOutsideJenkins(String referenceToStuffGoingOnOutsieJenkins) {
+        // in real code, something interesting happens here
     }
 
     public void run() {
         run(new Runner() {
             @Override
             public Result run(BuildListener listener) throws Exception {
+                referenceToStuffGoingOnOutsieJenkins = launchSomeActivityOutsideJenkins(listener);
                 return Result.SUCCESS;
+            }
+
+            private String launchSomeActivityOutsideJenkins(BuildListener listener) {
+                listener.getLogger().println("Launching something here");
+                // in real code, something interesting happens here
+                return UUID.randomUUID().toString();
             }
 
             @Override
